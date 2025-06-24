@@ -12,6 +12,7 @@ const userId = getUserId();
 const confessionForm = document.getElementById('confessionForm');
 const confessionInput = document.getElementById('confessionInput');
 const confessionWall = document.getElementById('confessionWall');
+const nicknameInput = document.getElementById('nicknameInput');
 
 const BACKEND_URL = 'https://0461665d-176b-4f0e-ad76-c54df5107797-00-2y23ah23ldcie.janeway.replit.dev';
 const socket = io(BACKEND_URL);
@@ -121,11 +122,12 @@ function renderConfession(confession) {
     e.preventDefault();
     const input = commentForm.querySelector('input');
     const text = input.value.trim();
+    const nickname = nicknameInput.value.trim();
     if (!text) return;
     await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/comment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, userId })
+      body: JSON.stringify({ text, userId, nickname })
     });
     input.value = '';
   };
@@ -157,11 +159,12 @@ async function loadConfessions() {
 confessionForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = confessionInput.value.trim();
+  const nickname = nicknameInput.value.trim();
   if (!text) return;
   const res = await fetch(`${BACKEND_URL}/api/confessions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, userId })
+    body: JSON.stringify({ text, userId, nickname })
   });
   if (res.ok) {
     confessionInput.value = '';
