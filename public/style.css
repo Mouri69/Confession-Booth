@@ -1,0 +1,91 @@
+body {
+  background: #f7f7f7;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 24px;
+}
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 24px;
+}
+#confessionForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+#confessionInput {
+  min-height: 60px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  resize: vertical;
+}
+#confessionForm button {
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 0;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#confessionForm button:hover {
+  background: #2563eb;
+}
+#confessionWall {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.confession {
+  background: #f1f5fb;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  position: relative;
+}
+.confession .meta {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 8px;
+}
+.confession .actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.confession .actions button {
+  background: none;
+  border: none;
+  color: #4f8cff;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 4px;
+  transition: color 0.2s;
+}
+.confession .actions button:hover {
+  color: #2563eb;
+}
+.confession .comments {
+  margin-top: 12px;
+  padding-left: 10px;
+  border-left: 2px solid #e0e7ef;
+}
+.comment {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 6px;
+} 
