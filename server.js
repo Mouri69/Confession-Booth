@@ -94,6 +94,21 @@ app.post('/api/confessions/:id/comment', async (req, res) => {
   }
 });
 
+// Delete a confession
+app.delete('/api/confessions/:id', async (req, res) => {
+  const { adminSecret } = req.body;
+  if (adminSecret !== process.env.ADMIN_SECRET) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  try {
+    await Confession.findByIdAndDelete(req.params.id);
+    io.emit('delete_confession', req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete confession.' });
+  }
+});
+
 // Socket.IO connection
 io.on('connection', (socket) => {
   console.log('A user connected');
