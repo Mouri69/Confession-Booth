@@ -23,9 +23,14 @@ function renderConfession(confession) {
   div.dataset.id = confession._id;
 
   // Main text and meta
+  let displayName = confession.userId;
+
   div.innerHTML = `
+    <div class="confession-header">
+      <span class="confession-nickname">${escapeHTML(displayName)}</span>
+      <span class="meta">${new Date(confession.timestamp).toLocaleString()}</span>
+    </div>
     <div class="text">${escapeHTML(confession.text)}</div>
-    <div class="meta">${new Date(confession.timestamp).toLocaleString()}</div>
     <div class="actions"></div>
     <div class="comments"></div>
   `;
@@ -105,7 +110,10 @@ function renderConfession(confession) {
   // Comments
   const commentsDiv = div.querySelector('.comments');
   commentsDiv.innerHTML = confession.comments.map(
-    c => `<div class="comment"><b>${escapeHTML(c.userId)}:</b> ${escapeHTML(c.text)}</div>`
+    c => {
+      let commentName = c.userId;
+      return `<div class="comment"><span class="comment-nickname">${escapeHTML(commentName)}</span>: ${escapeHTML(c.text)}</div>`;
+    }
   ).join('');
 
   // Add comment form
