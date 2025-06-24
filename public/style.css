@@ -107,9 +107,12 @@ h1 {
   flex-wrap: wrap;
 }
 .comment-form input[type="text"] {
-  flex: 0 1 80px;
+  height: 40px;
+  min-height: 40px;
+  max-height: 60px;
+  flex: 1 1 150px;
   min-width: 60px;
-  max-width: 90px;
+  max-width: 140px;
   box-sizing: border-box;
   padding: 8px 10px;
   border: 1.5px solid #bfc9d9;
