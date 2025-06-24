@@ -42,6 +42,26 @@ app.post('/api/confessions', async (req, res) => {
   }
 });
 
+// Upvote or downvote a confession
+app.post('/api/confessions/:id/vote', async (req, res) => {
+  const { vote } = req.body; // vote should be +1 (upvote) or -1 (downvote)
+  if (![1, -1].includes(vote)) {
+    return res.status(400).json({ error: 'Vote must be 1 or -1.' });
+  }
+  try {
+    const confession = await Confession.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { votes: vote } },
+      { new: true }
+    );
+    if (!confession) return res.status(404).json({ error: 'Confession not found.' });
+    io.emit('update_confession', confession);
+    res.json(confession);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to vote.' });
+  }
+});
+
 // Socket.IO connection
 io.on('connection', (socket) => {
   console.log('A user connected');
