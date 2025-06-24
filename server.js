@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -8,12 +9,18 @@ const Confession = require('./models/Confession');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 const mongoURI = process.env.MONGO_URI;
 
 console.log('MONGO_URI:', process.env.MONGO_URI);
+
+// CORS for Express
+app.use(cors({
+  origin: 'https://mouri69-confession.vercel.app',
+  methods: ['GET', 'POST', 'DELETE'],
+  credentials: true
+}));
 
 // Middleware
 app.use(express.json());
@@ -51,10 +58,11 @@ app.post('/api/confessions/:id/vote', async (req, res) => {
   try {
     const confession = await Confession.findById(req.params.id);
     if (!confession) return res.status(404).json({ error: 'Confession not found.' });
-    if (confession.voters.includes(userId)) {
+    if (confession.voters && confession.voters.includes(userId)) {
       return res.status(400).json({ error: 'You have already voted.' });
     }
     confession.votes += vote;
+    confession.voters = confession.voters || [];
     confession.voters.push(userId);
     await confession.save();
     io.emit('update_confession', confession);
@@ -96,7 +104,7 @@ app.post('/api/confessions/:id/comment', async (req, res) => {
   }
 });
 
-// Delete a confession
+// Delete a confession (admin only)
 app.delete('/api/confessions/:id', async (req, res) => {
   const { adminSecret } = req.body;
   if (adminSecret !== process.env.ADMIN_SECRET) {
@@ -111,7 +119,14 @@ app.delete('/api/confessions/:id', async (req, res) => {
   }
 });
 
-// Socket.IO connection
+// Socket.IO with CORS for Vercel frontend
+const io = new Server(server, {
+  cors: {
+    origin: 'https://mouri69-confession.vercel.app',
+    methods: ['GET', 'POST']
+  }
+});
+
 io.on('connection', (socket) => {
   console.log('A user connected');
   socket.on('disconnect', () => {
@@ -119,9 +134,10 @@ io.on('connection', (socket) => {
   });
 });
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+  .catch((err) => console.error('MongoDB connection error:', err));
 
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
