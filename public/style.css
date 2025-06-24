@@ -139,4 +139,15 @@ h1 {
 .emoji-btn span {
   font-size: 1rem;
   margin-left: 2px;
+}
+.confession-nickname, .comment-nickname {
+  font-weight: bold;
+  color: #2563eb;
+  margin-right: 6px;
+}
+.confession-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
 } 
