@@ -127,8 +127,8 @@ h1 {
 }
 .comment-form button {
   width: 100px;
-  min-width: 100px;
-  max-width: 100px;
+  min-width: 100%;
+  max-width: 100%;
   padding: 8px 16px;
   margin-top: 0;
   background: #4f8cff;
