@@ -20,32 +20,97 @@ const socket = io();
 function renderConfession(confession) {
   const div = document.createElement('div');
   div.className = 'confession';
+  div.dataset.id = confession._id;
+
+  // Main text and meta
   div.innerHTML = `
     <div class="text">${escapeHTML(confession.text)}</div>
     <div class="meta">${new Date(confession.timestamp).toLocaleString()}</div>
-    <div class="actions">
-      <button class="upvote">👍</button>
-      <span class="votes">${confession.votes}</span>
-      <button class="downvote">👎</button>
-      <button disabled title="Coming soon">💬 ${confession.comments.length}</button>
-    </div>
+    <div class="actions"></div>
     <div class="comments"></div>
   `;
 
-  // Voting logic
-  div.querySelector('.upvote').onclick = async () => {
+  // Actions
+  const actionsDiv = div.querySelector('.actions');
+
+  // Upvote button
+  const upvoteBtn = document.createElement('button');
+  upvoteBtn.className = 'upvote';
+  upvoteBtn.textContent = '👍';
+  upvoteBtn.onclick = async () => {
     await fetch(`/api/confessions/${confession._id}/vote`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vote: 1 })
+      body: JSON.stringify({ vote: 1, userId })
     });
   };
-  div.querySelector('.downvote').onclick = async () => {
+  actionsDiv.appendChild(upvoteBtn);
+
+  // Vote count
+  const votesSpan = document.createElement('span');
+  votesSpan.className = 'votes';
+  votesSpan.textContent = confession.votes;
+  actionsDiv.appendChild(votesSpan);
+
+  // Downvote button
+  const downvoteBtn = document.createElement('button');
+  downvoteBtn.className = 'downvote';
+  downvoteBtn.textContent = '👎';
+  downvoteBtn.onclick = async () => {
     await fetch(`/api/confessions/${confession._id}/vote`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ vote: -1 })
+      body: JSON.stringify({ vote: -1, userId })
     });
+  };
+  actionsDiv.appendChild(downvoteBtn);
+
+  // Comment count (disabled for now)
+  const commentCountBtn = document.createElement('button');
+  commentCountBtn.disabled = true;
+  commentCountBtn.textContent = `💬 ${confession.comments.length}`;
+  actionsDiv.appendChild(commentCountBtn);
+
+  // Delete button
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '🗑️ Delete';
+  deleteBtn.onclick = async () => {
+    const adminSecret = prompt('Enter admin password:');
+    if (!adminSecret) return;
+    await fetch(`/api/confessions/${confession._id}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adminSecret })
+    });
+  };
+  actionsDiv.appendChild(deleteBtn);
+
+  // Comments
+  const commentsDiv = div.querySelector('.comments');
+  commentsDiv.innerHTML = confession.comments.map(
+    c => `<div class="comment"><b>${escapeHTML(c.userId)}:</b> ${escapeHTML(c.text)}</div>`
+  ).join('');
+
+  // Add comment form
+  const commentForm = document.createElement('form');
+  commentForm.className = 'comment-form';
+  commentForm.innerHTML = `
+    <input type="text" placeholder="Add a comment..." required>
+    <button type="submit">Send</button>
+  `;
+  commentsDiv.appendChild(commentForm);
+
+  commentForm.onsubmit = async (e) => {
+    e.preventDefault();
+    const input = commentForm.querySelector('input');
+    const text = input.value.trim();
+    if (!text) return;
+    await fetch(`/api/confessions/${confession._id}/comment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, userId })
+    });
+    input.value = '';
   };
 
   return div;
@@ -101,6 +166,28 @@ socket.on('update_confession', (confession) => {
   confessionDivs.forEach(div => {
     if (div.querySelector('.text').textContent === confession.text) {
       div.querySelector('.votes').textContent = confession.votes;
+    }
+  });
+});
+
+// Remove confession when deleted
+socket.on('delete_confession', (id) => {
+  const confessionDivs = confessionWall.querySelectorAll('.confession');
+  confessionDivs.forEach(div => {
+    if (div.dataset.id === id) {
+      div.remove();
+    }
+  });
+});
+
+// Update confession when changed (votes, comments, reactions)
+socket.on('update_confession', (confession) => {
+  const confessionDivs = confessionWall.querySelectorAll('.confession');
+  confessionDivs.forEach(div => {
+    if (div.dataset.id === confession._id) {
+      // Replace the confession div with a new one
+      const newDiv = renderConfession(confession);
+      confessionWall.replaceChild(newDiv, div);
     }
   });
 });

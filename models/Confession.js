@@ -12,7 +12,8 @@ const ConfessionSchema = new mongoose.Schema({
   timestamp: { type: Date, default: Date.now },
   votes: { type: Number, default: 0 },
   reactions: { type: Map, of: Number, default: {} },
-  comments: { type: [CommentSchema], default: [] }
+  comments: { type: [CommentSchema], default: [] },
+  voters: { type: [String], default: [] }
 });
 
 module.exports = mongoose.model('Confession', ConfessionSchema);

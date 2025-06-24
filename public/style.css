@@ -85,7 +85,43 @@ h1 {
   border-left: 2px solid #e0e7ef;
 }
 .comment {
-  font-size: 0.95rem;
-  color: #444;
+  font-size: 0.97rem;
+  color: #222;
+  background: #e8f0fe;
+  border-radius: 4px;
+  padding: 6px 10px;
   margin-bottom: 6px;
+  margin-left: 0;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.comment-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.comment-form input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #bfc9d9;
+  border-radius: 4px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.comment-form input[type="text"]:focus {
+  border: 1.5px solid #4f8cff;
+  background: #f5faff;
+}
+.comment-form button {
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.comment-form button:hover {
+  background: #2563eb;
 } 

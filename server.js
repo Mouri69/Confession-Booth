@@ -44,17 +44,19 @@ app.post('/api/confessions', async (req, res) => {
 
 // Upvote or downvote a confession
 app.post('/api/confessions/:id/vote', async (req, res) => {
-  const { vote } = req.body; // vote should be +1 (upvote) or -1 (downvote)
-  if (![1, -1].includes(vote)) {
-    return res.status(400).json({ error: 'Vote must be 1 or -1.' });
+  const { vote, userId } = req.body;
+  if (![1, -1].includes(vote) || !userId) {
+    return res.status(400).json({ error: 'Vote must be 1 or -1 and userId is required.' });
   }
   try {
-    const confession = await Confession.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { votes: vote } },
-      { new: true }
-    );
+    const confession = await Confession.findById(req.params.id);
     if (!confession) return res.status(404).json({ error: 'Confession not found.' });
+    if (confession.voters.includes(userId)) {
+      return res.status(400).json({ error: 'You have already voted.' });
+    }
+    confession.votes += vote;
+    confession.voters.push(userId);
+    await confession.save();
     io.emit('update_confession', confession);
     res.json(confession);
   } catch (err) {
