@@ -78,6 +78,22 @@ app.post('/api/confessions/:id/react', async (req, res) => {
   }
 });
 
+// Add a comment to a confession
+app.post('/api/confessions/:id/comment', async (req, res) => {
+  const { text, userId } = req.body;
+  if (!text || !userId) return res.status(400).json({ error: 'Text and userId are required.' });
+  try {
+    const confession = await Confession.findById(req.params.id);
+    if (!confession) return res.status(404).json({ error: 'Confession not found.' });
+    confession.comments.push({ text, userId });
+    await confession.save();
+    io.emit('update_confession', confession);
+    res.json(confession);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to add comment.' });
+  }
+});
+
 // Socket.IO connection
 io.on('connection', (socket) => {
   console.log('A user connected');
