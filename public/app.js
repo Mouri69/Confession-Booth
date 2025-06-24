@@ -13,7 +13,7 @@ const confessionForm = document.getElementById('confessionForm');
 const confessionInput = document.getElementById('confessionInput');
 const confessionWall = document.getElementById('confessionWall');
 
-const BACKEND_URL = 'https://harvest-narrow-message.glitch.me';
+const BACKEND_URL = 'https://0461665d-176b-4f0e-ad76-c54df5107797-00-2y23ah23ldcie.janeway.replit.dev';
 const socket = io(BACKEND_URL);
 
 // Render a single confession
