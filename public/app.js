@@ -12,7 +12,6 @@ const userId = getUserId();
 const confessionForm = document.getElementById('confessionForm');
 const confessionInput = document.getElementById('confessionInput');
 const confessionWall = document.getElementById('confessionWall');
-const nicknameInput = document.getElementById('nicknameInput');
 
 const BACKEND_URL = 'https://0461665d-176b-4f0e-ad76-c54df5107797-00-2y23ah23ldcie.janeway.replit.dev';
 const socket = io(BACKEND_URL);
@@ -23,17 +22,10 @@ function renderConfession(confession) {
   div.className = 'confession';
   div.dataset.id = confession._id;
 
-  // Show nickname or userId, and highlight if it's the current user
-  let displayName = confession.nickname ? confession.nickname : confession.userId;
-  if (confession.userId === userId) {
-    displayName += ' (You)';
-  }
+  // Main text and meta
   div.innerHTML = `
-    <div class="confession-header">
-      <span class="confession-nickname">${escapeHTML(displayName)}</span>
-      <span class="meta">${new Date(confession.timestamp).toLocaleString()}</span>
-    </div>
     <div class="text">${escapeHTML(confession.text)}</div>
+    <div class="meta">${new Date(confession.timestamp).toLocaleString()}</div>
     <div class="actions"></div>
     <div class="comments"></div>
   `;
@@ -113,18 +105,13 @@ function renderConfession(confession) {
   // Comments
   const commentsDiv = div.querySelector('.comments');
   commentsDiv.innerHTML = confession.comments.map(
-    c => {
-      let commentName = c.nickname ? c.nickname : c.userId;
-      if (c.userId === userId) commentName += ' (You)';
-      return `<div class="comment"><span class="comment-nickname">${escapeHTML(commentName)}</span>: ${escapeHTML(c.text)}</div>`;
-    }
+    c => `<div class="comment"><b>${escapeHTML(c.userId)}:</b> ${escapeHTML(c.text)}</div>`
   ).join('');
 
   // Add comment form
   const commentForm = document.createElement('form');
   commentForm.className = 'comment-form';
   commentForm.innerHTML = `
-    <input type="text" class="comment-nickname-input" placeholder="Your nickname (optional)" maxlength="20">
     <input type="text" placeholder="Add a comment..." required>
     <button type="submit">Send</button>
   `;
@@ -132,14 +119,13 @@ function renderConfession(confession) {
 
   commentForm.onsubmit = async (e) => {
     e.preventDefault();
-    const nickname = commentForm.querySelector('.comment-nickname-input').value.trim();
-    const input = commentForm.querySelector('input[placeholder=\"Add a comment...\"]');
+    const input = commentForm.querySelector('input');
     const text = input.value.trim();
     if (!text) return;
     await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/comment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text, userId, nickname })
+      body: JSON.stringify({ text, userId })
     });
     input.value = '';
   };
@@ -171,16 +157,14 @@ async function loadConfessions() {
 confessionForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = confessionInput.value.trim();
-  const nickname = nicknameInput.value.trim();
   if (!text) return;
   const res = await fetch(`${BACKEND_URL}/api/confessions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text, userId, nickname })
+    body: JSON.stringify({ text, userId })
   });
   if (res.ok) {
     confessionInput.value = '';
-    nicknameInput.value = '';
   }
 });
 

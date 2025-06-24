@@ -150,19 +150,4 @@ h1 {
   align-items: center;
   gap: 10px;
   margin-bottom: 4px;
-}
-#nicknameInput, .comment-nickname-input {
-  border: 1.5px solid #bfc9d9;
-  border-radius: 4px;
-  padding: 8px 10px;
-  font-size: 1rem;
-  margin-bottom: 8px;
-  margin-right: 8px;
-  outline: none;
-  transition: border 0.2s;
-  background: #f5faff;
-}
-#nicknameInput:focus, .comment-nickname-input:focus {
-  border: 1.5px solid #4f8cff;
-  background: #eaf3ff;
 } 
