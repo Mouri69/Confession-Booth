@@ -94,5 +94,16 @@ socket.on('new_confession', (confession) => {
   confessionWall.insertBefore(div, first);
 });
 
+// Listen for vote updates
+socket.on('update_confession', (confession) => {
+  // Find and update the confession in the wall
+  const confessionDivs = confessionWall.querySelectorAll('.confession');
+  confessionDivs.forEach(div => {
+    if (div.querySelector('.text').textContent === confession.text) {
+      div.querySelector('.votes').textContent = confession.votes;
+    }
+  });
+});
+
 // Initial load
 loadConfessions(); 
