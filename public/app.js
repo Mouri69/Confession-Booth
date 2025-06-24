@@ -124,6 +124,7 @@ function renderConfession(confession) {
   const commentForm = document.createElement('form');
   commentForm.className = 'comment-form';
   commentForm.innerHTML = `
+    <input type="text" class="comment-nickname-input" placeholder="Your nickname (optional)" maxlength="20">
     <input type="text" placeholder="Add a comment..." required>
     <button type="submit">Send</button>
   `;
@@ -131,9 +132,9 @@ function renderConfession(confession) {
 
   commentForm.onsubmit = async (e) => {
     e.preventDefault();
-    const input = commentForm.querySelector('input');
+    const nickname = commentForm.querySelector('.comment-nickname-input').value.trim();
+    const input = commentForm.querySelector('input[placeholder=\"Add a comment...\"]');
     const text = input.value.trim();
-    const nickname = nicknameInput.value.trim();
     if (!text) return;
     await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/comment`, {
       method: 'POST',
