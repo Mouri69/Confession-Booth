@@ -210,4 +210,4 @@ socket.on('update_confession', (confession) => {
 });
 
 // Initial load
-loadConfessions(); 
+loadConfessions();
