@@ -124,4 +124,19 @@ h1 {
 }
 .comment-form button:hover {
   background: #2563eb;
+}
+.emoji-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  margin-left: 4px;
+  transition: transform 0.1s;
+}
+.emoji-btn:hover {
+  transform: scale(1.2);
+}
+.emoji-btn span {
+  font-size: 1rem;
+  margin-left: 2px;
 } 

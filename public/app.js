@@ -85,6 +85,23 @@ function renderConfession(confession) {
   };
   actionsDiv.appendChild(deleteBtn);
 
+  // Emojis
+  const emojis = ['😂', '😮', '😢', '❤️'];
+  emojis.forEach(emoji => {
+    const count = confession.reactions && confession.reactions[emoji] ? confession.reactions[emoji] : 0;
+    const emojiBtn = document.createElement('button');
+    emojiBtn.className = 'emoji-btn';
+    emojiBtn.innerHTML = `${emoji} <span>${count}</span>`;
+    emojiBtn.onclick = async () => {
+      await fetch(`/api/confessions/${confession._id}/react`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emoji })
+      });
+    };
+    actionsDiv.appendChild(emojiBtn);
+  });
+
   // Comments
   const commentsDiv = div.querySelector('.comments');
   commentsDiv.innerHTML = confession.comments.map(
