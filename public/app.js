@@ -13,8 +13,8 @@ const confessionForm = document.getElementById('confessionForm');
 const confessionInput = document.getElementById('confessionInput');
 const confessionWall = document.getElementById('confessionWall');
 
-// Socket.IO setup
-const socket = io();
+const BACKEND_URL = 'https://harvest-narrow-message.glitch.me';
+const socket = io(BACKEND_URL);
 
 // Render a single confession
 function renderConfession(confession) {
@@ -38,7 +38,7 @@ function renderConfession(confession) {
   upvoteBtn.className = 'upvote';
   upvoteBtn.textContent = '👍';
   upvoteBtn.onclick = async () => {
-    await fetch(`/api/confessions/${confession._id}/vote`, {
+    await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/vote`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ vote: 1, userId })
@@ -57,7 +57,7 @@ function renderConfession(confession) {
   downvoteBtn.className = 'downvote';
   downvoteBtn.textContent = '👎';
   downvoteBtn.onclick = async () => {
-    await fetch(`/api/confessions/${confession._id}/vote`, {
+    await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/vote`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ vote: -1, userId })
@@ -77,7 +77,7 @@ function renderConfession(confession) {
   deleteBtn.onclick = async () => {
     const adminSecret = prompt('Enter admin password:');
     if (!adminSecret) return;
-    await fetch(`/api/confessions/${confession._id}`, {
+    await fetch(`${BACKEND_URL}/api/confessions/${confession._id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ adminSecret })
@@ -93,7 +93,7 @@ function renderConfession(confession) {
     emojiBtn.className = 'emoji-btn';
     emojiBtn.innerHTML = `${emoji} <span>${count}</span>`;
     emojiBtn.onclick = async () => {
-      await fetch(`/api/confessions/${confession._id}/react`, {
+      await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/react`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ emoji })
@@ -122,7 +122,7 @@ function renderConfession(confession) {
     const input = commentForm.querySelector('input');
     const text = input.value.trim();
     if (!text) return;
-    await fetch(`/api/confessions/${confession._id}/comment`, {
+    await fetch(`${BACKEND_URL}/api/confessions/${confession._id}/comment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, userId })
@@ -148,7 +148,7 @@ function renderWall(confessions) {
 
 // Fetch and display confessions
 async function loadConfessions() {
-  const res = await fetch('/api/confessions');
+  const res = await fetch(`${BACKEND_URL}/api/confessions`);
   const data = await res.json();
   renderWall(data);
 }
@@ -158,7 +158,7 @@ confessionForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const text = confessionInput.value.trim();
   if (!text) return;
-  const res = await fetch('/api/confessions', {
+  const res = await fetch(`${BACKEND_URL}/api/confessions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text, userId })
