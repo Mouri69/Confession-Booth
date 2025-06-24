@@ -24,13 +24,30 @@ function renderConfession(confession) {
     <div class="text">${escapeHTML(confession.text)}</div>
     <div class="meta">${new Date(confession.timestamp).toLocaleString()}</div>
     <div class="actions">
-      <button disabled title="Coming soon">👍 ${confession.votes}</button>
+      <button class="upvote">👍</button>
+      <span class="votes">${confession.votes}</span>
+      <button class="downvote">👎</button>
       <button disabled title="Coming soon">💬 ${confession.comments.length}</button>
     </div>
-    <div class="comments">
-      <!-- Comments will go here -->
-    </div>
+    <div class="comments"></div>
   `;
+
+  // Voting logic
+  div.querySelector('.upvote').onclick = async () => {
+    await fetch(`/api/confessions/${confession._id}/vote`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vote: 1 })
+    });
+  };
+  div.querySelector('.downvote').onclick = async () => {
+    await fetch(`/api/confessions/${confession._id}/vote`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ vote: -1 })
+    });
+  };
+
   return div;
 }
 
