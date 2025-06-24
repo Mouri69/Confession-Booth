@@ -107,12 +107,11 @@ h1 {
   flex-wrap: wrap;
 }
 .comment-form input[type="text"] {
-  width:100px;
   height: 40px;
   min-height: 40px;
   max-height: 60px;
   flex: 1 1 150px;
-  min-width: 60px;
+  min-width: 100px;
   max-width: 140px;
   box-sizing: border-box;
   padding: 8px 10px;
