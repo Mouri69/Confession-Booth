@@ -62,6 +62,22 @@ app.post('/api/confessions/:id/vote', async (req, res) => {
   }
 });
 
+// Add a reaction to a confession
+app.post('/api/confessions/:id/react', async (req, res) => {
+  const { emoji } = req.body;
+  if (!emoji) return res.status(400).json({ error: 'Emoji is required.' });
+  try {
+    const confession = await Confession.findById(req.params.id);
+    if (!confession) return res.status(404).json({ error: 'Confession not found.' });
+    confession.reactions.set(emoji, (confession.reactions.get(emoji) || 0) + 1);
+    await confession.save();
+    io.emit('update_confession', confession);
+    res.json(confession);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to react.' });
+  }
+});
+
 // Socket.IO connection
 io.on('connection', (socket) => {
   console.log('A user connected');
